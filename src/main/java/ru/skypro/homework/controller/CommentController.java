@@ -5,9 +5,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.skypro.homework.dto.Comment;
-import ru.skypro.homework.dto.Comments;
-import ru.skypro.homework.dto.CreateOrUpdateComment;
+import ru.skypro.homework.dto.CommentDTO;
+import ru.skypro.homework.dto.CommentsDTO;
+import ru.skypro.homework.dto.CreateOrUpdateCommentDTO;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,17 +17,17 @@ public class CommentController {
 
     @GetMapping("/{id}/comments")
     @Operation(summary = "Получить комментарии")
-    public Comments getComments(@PathVariable Integer id) {
-        return new Comments();
+    public CommentsDTO getComments(@PathVariable Integer id) {
+        return new CommentsDTO();
     }
 
     @PostMapping("/{id}/comments")
     @Operation(summary = "Добавить комментарий")
-    public Comment addComment(
+    public CommentDTO addComment(
             @PathVariable Integer id,
-            @RequestBody CreateOrUpdateComment comment
+            @RequestBody CreateOrUpdateCommentDTO comment
     ) {
-        return new Comment();
+        return new CommentDTO();
     }
 
     @DeleteMapping("/{adId}/comments/{commentId}")
@@ -41,11 +41,11 @@ public class CommentController {
 
     @PatchMapping("/{adId}/comments/{commentId}")
     @Operation(summary = "Обновить комментарий")
-    public Comment updateComment(
+    public CommentDTO updateComment(
             @PathVariable Integer adId,
             @PathVariable Integer commentId,
-            @RequestBody CreateOrUpdateComment comment
+            @RequestBody CreateOrUpdateCommentDTO comment
     ) {
-        return new Comment();
+        return new CommentDTO();
     }
 }

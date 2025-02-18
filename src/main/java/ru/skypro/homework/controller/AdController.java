@@ -7,10 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.Ad;
-import ru.skypro.homework.dto.Ads;
-import ru.skypro.homework.dto.CreateOrUpdateAd;
-import ru.skypro.homework.dto.ExtendedAd;
+import ru.skypro.homework.dto.AdDTO;
+import ru.skypro.homework.dto.AdsDTO;
+import ru.skypro.homework.dto.CreateOrUpdateAdDTO;
+import ru.skypro.homework.dto.ExtendedAdDTO;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,25 +20,25 @@ public class AdController {
 
     @GetMapping
     @Operation(summary = "Получить все объявления")
-    public Ads getAllAds() {
-        return new Ads();
+    public AdsDTO getAllAds() {
+        return new AdsDTO();
     }
 
     @PostMapping(consumes = "multipart/form-data")
     @Operation(summary = "Добавить объявление")
-    public ResponseEntity<Ad> addAd(
-            @RequestPart("properties") CreateOrUpdateAd properties,
+    public ResponseEntity<AdDTO> addAd(
+            @RequestPart("properties") CreateOrUpdateAdDTO properties,
             @RequestPart("image") MultipartFile image
     ) {
-        Ad ad = new Ad();
+        AdDTO ad = new AdDTO();
         ad.setPk(1);
         return ResponseEntity.status(HttpStatus.CREATED).body(ad);
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Получить объявление")
-    public ExtendedAd getAd(@PathVariable Integer id) {
-        return new ExtendedAd();
+    public ExtendedAdDTO getAd(@PathVariable Integer id) {
+        return new ExtendedAdDTO();
     }
 
     @DeleteMapping("/{id}")
@@ -49,17 +49,17 @@ public class AdController {
 
     @PatchMapping("/{id}")
     @Operation(summary = "Обновить объявление")
-    public Ad updateAd(
+    public AdDTO updateAd(
             @PathVariable Integer id,
-            @RequestBody CreateOrUpdateAd updateAd
+            @RequestBody CreateOrUpdateAdDTO updateAd
     ) {
-        return new Ad();
+        return new AdDTO();
     }
 
     @GetMapping("/me")
     @Operation(summary = "Получить мои объявления")
-    public Ads getMyAds() {
-        return new Ads();
+    public AdsDTO getMyAds() {
+        return new AdsDTO();
     }
 
     @PatchMapping(value = "/{id}/image", consumes = "multipart/form-data")
