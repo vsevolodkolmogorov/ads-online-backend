@@ -8,12 +8,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.Login;
-import ru.skypro.homework.dto.Register;
 import ru.skypro.homework.service.AuthService;
 
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
-@RestController("/login")
+@RestController
+@RequestMapping("/login")
 @RequiredArgsConstructor
 public class AuthController {
 
