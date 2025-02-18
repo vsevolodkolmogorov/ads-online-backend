@@ -3,7 +3,7 @@ package ru.skypro.homework.dto;
 import lombok.Data;
 
 @Data
-public class CreateOrUpdateComment {
+public class CreateOrUpdateCommentDTO {
 
     private String text;
 }

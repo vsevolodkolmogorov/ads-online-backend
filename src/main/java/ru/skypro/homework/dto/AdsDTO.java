@@ -3,8 +3,8 @@ package ru.skypro.homework.dto;
 import lombok.Data;
 
 @Data
-public class Ads {
+public class AdsDTO {
 
     private int count;
-    private Ad ad;
+    private AdDTO ad;
 }
