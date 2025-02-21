@@ -10,13 +10,15 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.AdDTO;
 import ru.skypro.homework.dto.AdsDTO;
 import ru.skypro.homework.dto.CreateOrUpdateAdDTO;
-import ru.skypro.homework.dto.ExtendedAdDTO;
+import ru.skypro.homework.service.AdService;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/ads")
 @Tag(name = "Объявления")
 public class AdController {
+
+    private final AdService adService;
 
     @GetMapping
     @Operation(summary = "Получить все объявления")
@@ -37,8 +39,8 @@ public class AdController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Получить объявление")
-    public ExtendedAdDTO getAd(@PathVariable Integer id) {
-        return new ExtendedAdDTO();
+    public ResponseEntity<AdDTO> getAd(@PathVariable Integer id) {
+        return ResponseEntity.ok(adService.getAdById(id));
     }
 
     @DeleteMapping("/{id}")

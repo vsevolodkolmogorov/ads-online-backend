@@ -8,6 +8,7 @@ import javax.persistence.*;
 @Data
 @Accessors(chain = true)
 @Entity
+@Table(name = "comments")
 public class Comment {
 
     @Id
@@ -17,11 +18,18 @@ public class Comment {
     @Column(name = "author")
     private Integer authorId;
 
-    @ManyToOne
+    @Column(name = "ad_id")
+    private Integer adId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author", referencedColumnName = "id", insertable = false, updatable = false)
     private User author;
 
     private Long createdAt;
 
     private String text;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ad_id", referencedColumnName = "pk", insertable = false, updatable = false)
+    private Ad ad;
 }

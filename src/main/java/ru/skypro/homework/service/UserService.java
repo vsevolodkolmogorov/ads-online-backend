@@ -1,4 +1,12 @@
 package ru.skypro.homework.service;
 
+import ru.skypro.homework.dto.UpdateUserDTO;
+import ru.skypro.homework.dto.UserDTO;
+import ru.skypro.homework.model.User;
+
 public interface UserService {
+    UserDTO getUserDTO(User user);
+    User createUserFromDTO(UserDTO userDTO);
+
+    UserDTO updateUser(UpdateUserDTO updateUserDTO, String username);
 }

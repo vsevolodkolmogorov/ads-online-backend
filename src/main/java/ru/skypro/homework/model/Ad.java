@@ -4,10 +4,12 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Accessors(chain = true)
 @Entity
+@Table(name = "ads")
 public class Ad {
 
     @Id
@@ -17,7 +19,7 @@ public class Ad {
     @Column(name = "author")
     private Integer authorId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author", referencedColumnName = "id", insertable = false, updatable = false)
     private User author;
 
@@ -26,4 +28,7 @@ public class Ad {
     private Integer price;
 
     private String title;
+
+    @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Comment> comments;
 }

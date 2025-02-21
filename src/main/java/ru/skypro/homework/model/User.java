@@ -5,6 +5,7 @@ import lombok.experimental.Accessors;
 import ru.skypro.homework.dto.RoleDTO;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Accessors(chain = true)
@@ -30,4 +31,10 @@ public class User {
     private RoleDTO role;
 
     private String image;
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Ad> ads;
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Comment> comments;
 }
