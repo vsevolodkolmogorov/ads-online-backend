@@ -17,12 +17,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(unique = true)
-    private String email;
+    @Column(name = "username", unique = true)
+    private String username;
 
     private String firstName;
 
     private String lastName;
+
+    private String password;
 
     @Column(unique = true)
     private String phone;
@@ -37,4 +39,7 @@ public class User {
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Comment> comments;
+
+
 }
+

@@ -1,6 +1,7 @@
 package ru.skypro.homework.model;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
@@ -16,11 +17,8 @@ public class Ad {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer pk;
 
-    @Column(name = "author")
-    private Integer authorId;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "author_id")
     private User author;
 
     private String image;
@@ -28,6 +26,8 @@ public class Ad {
     private Integer price;
 
     private String title;
+
+    private String description;
 
     @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Comment> comments;

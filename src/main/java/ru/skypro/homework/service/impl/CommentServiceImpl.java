@@ -2,6 +2,7 @@ package ru.skypro.homework.service.impl;
 
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.CommentDTO;
+import ru.skypro.homework.dto.CommentsDTO;
 import ru.skypro.homework.dto.CreateOrUpdateCommentDTO;
 import ru.skypro.homework.mapper.CommentMapper;
 import ru.skypro.homework.model.Ad;
@@ -13,6 +14,8 @@ import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.CommentService;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -42,17 +45,15 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentDTO addComment(Integer adId, CreateOrUpdateCommentDTO commentDTO, String username) {
-        User author = userRepository.findByEmail(username)
+        User author = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Ad ad = adRepository.findById(adId)
                 .orElseThrow(() -> new RuntimeException("Ad not found"));
-
         Comment comment = new Comment()
                 .setText(commentDTO.getText())
                 .setAd(ad)
                 .setAuthor(author)
                 .setCreatedAt(Instant.now().getEpochSecond());
-
         commentRepository.save(comment);
         return commentMapper.commentToCommentDTO(comment);
     }
@@ -61,11 +62,28 @@ public class CommentServiceImpl implements CommentService {
     public void deleteComment(Integer commentId, String username) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
-
-        if (!comment.getAuthor().getEmail().equals(username)) {
+        if (!comment.getAuthor().getUsername().equals(username)) {
             throw new RuntimeException("You are not author of this comment");
         }
-
         commentRepository.delete(comment);
+    }
+    @Override
+    public CommentsDTO getComments(Integer adId) {
+        Ad ad = adRepository.findById(adId)
+                .orElseThrow(() -> new RuntimeException("Ad not found"));
+        List<Comment> comments = commentRepository.findByAd(ad);
+        List<CommentDTO> commentDTOs = comments.stream()
+                .map(commentMapper::commentToCommentDTO)
+                .collect(Collectors.toList());
+        return new CommentsDTO(commentDTOs.size(), commentDTOs);
+    }
+
+    @Override
+    public CommentDTO updateComment(Integer commentId, CreateOrUpdateCommentDTO commentDTO) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
+        comment.setText(commentDTO.getText());
+        commentRepository.save(comment);
+        return commentMapper.commentToCommentDTO(comment);
     }
 }

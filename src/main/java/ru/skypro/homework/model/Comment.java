@@ -1,6 +1,7 @@
 package ru.skypro.homework.model;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
@@ -15,21 +16,17 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer pk;
 
-    @Column(name = "author")
-    private Integer authorId;
-
-    @Column(name = "ad_id")
-    private Integer adId;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "author_id")
     private User author;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ad_id")
+    private Ad ad;
+
+    @Column(name = "created_at")
     private Long createdAt;
 
     private String text;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ad_id", referencedColumnName = "pk", insertable = false, updatable = false)
-    private Ad ad;
 }
