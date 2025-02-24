@@ -47,8 +47,7 @@ public class UserController {
     @ApiResponse(responseCode = "401")
     @PatchMapping("/me")
     public ResponseEntity<UserDTO> updateUser(@RequestBody UpdateUserDTO updateUser) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserDTO updatedUser = userService.updateUser(updateUser, username);
+        UserDTO updatedUser = userService.updateUser(updateUser);
         return ResponseEntity.ok(updatedUser);
     }
 
