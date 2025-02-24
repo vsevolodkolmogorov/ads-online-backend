@@ -10,8 +10,8 @@ import ru.skypro.homework.mapper.AdMapper;
 import ru.skypro.homework.model.Ad;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.AdRepository;
-import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdService;
+import ru.skypro.homework.utility.SecurityUtil;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,12 +21,14 @@ public class AdServiceImpl implements AdService {
 
     private final AdMapper adMapper;
     private final AdRepository adRepository;
-    private final UserRepository userRepository;
+    private final UserServiceImpl userService;
+    private final SecurityUtil securityUtil;
 
-    public AdServiceImpl(AdMapper adMapper, AdRepository adRepository, UserRepository userRepository) {
+    public AdServiceImpl(AdMapper adMapper, AdRepository adRepository, UserServiceImpl userService, SecurityUtil securityUtil) {
         this.adMapper = adMapper;
         this.adRepository = adRepository;
-        this.userRepository = userRepository;
+        this.userService = userService;
+        this.securityUtil = securityUtil;
     }
 
     @Override
@@ -47,9 +49,9 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
-    public AdDTO addAd(CreateOrUpdateAdDTO adDTO, MultipartFile image, String username) {
-        User author = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public AdDTO addAd(CreateOrUpdateAdDTO adDTO, MultipartFile image) {
+        User author = userService.getCurrentUserEntity();
+
         Ad ad = new Ad()
                 .setTitle(adDTO.getTitle())
                 .setPrice(adDTO.getPrice())
@@ -60,7 +62,9 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
-    public void deleteAd(Integer id, String username) {
+    public void deleteAd(Integer id) {
+        String username = securityUtil.getCurrentUsername();
+
         Ad ad = adRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ad not found"));
         if (!ad.getAuthor().getUsername().equals(username)) {
@@ -68,6 +72,7 @@ public class AdServiceImpl implements AdService {
         }
         adRepository.delete(ad);
     }
+
     @Override
     public AdsDTO getAllAds() {
         List<Ad> ads = adRepository.findAll();
@@ -90,11 +95,7 @@ public class AdServiceImpl implements AdService {
 
     @Override
     public AdsDTO getMyAds() {
-        String email = SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getName();
-        User user = userRepository.findByUsername(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userService.getCurrentUserEntity();
         List<Ad> ads = adRepository.findByAuthor(user);
         List<AdDTO> adDTOs = ads.stream()
                 .map(adMapper::adToAdDTO)
@@ -102,11 +103,15 @@ public class AdServiceImpl implements AdService {
         return new AdsDTO(adDTOs.size(), adDTOs);
     }
 
+    /**
+     * Обновление изображения товар.
+     * TODO: Реализовать сохранение изображения в базу данных ( с использованием облачного хранилища ).
+     */
     @Override
     public void updateAdImage(Integer id, MultipartFile image) {
         Ad ad = adRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ad not found"));
-        ad.setImage(""); // Надо реализовать логику, пока заглушка.
+        ad.setImage("");
         adRepository.save(ad);
     }
 }

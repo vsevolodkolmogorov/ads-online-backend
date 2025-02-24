@@ -10,8 +10,8 @@ import ru.skypro.homework.model.Comment;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.repository.CommentRepository;
-import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.CommentService;
+import ru.skypro.homework.utility.SecurityUtil;
 
 import java.time.Instant;
 import java.util.List;
@@ -23,14 +23,16 @@ public class CommentServiceImpl implements CommentService {
     private final CommentMapper commentMapper;
     private final CommentRepository commentRepository;
     private final AdRepository adRepository;
-    private final UserRepository userRepository;
+    private final UserServiceImpl userService;
+    private final SecurityUtil securityUtil;
 
     public CommentServiceImpl(CommentMapper commentMapper, CommentRepository commentRepository,
-                              AdRepository adRepository, UserRepository userRepository) {
+                              AdRepository adRepository, UserServiceImpl userService, SecurityUtil securityUtil) {
         this.commentMapper = commentMapper;
         this.commentRepository = commentRepository;
         this.adRepository = adRepository;
-        this.userRepository = userRepository;
+        this.userService = userService;
+        this.securityUtil = securityUtil;
     }
 
     @Override
@@ -44,9 +46,9 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentDTO addComment(Integer adId, CreateOrUpdateCommentDTO commentDTO, String username) {
-        User author = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public CommentDTO addComment(Integer adId, CreateOrUpdateCommentDTO commentDTO) {
+        User author = userService.getCurrentUserEntity();
+
         Ad ad = adRepository.findById(adId)
                 .orElseThrow(() -> new RuntimeException("Ad not found"));
         Comment comment = new Comment()
@@ -59,7 +61,9 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void deleteComment(Integer commentId, String username) {
+    public void deleteComment(Integer commentId) {
+        String username = securityUtil.getCurrentUsername();
+
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
         if (!comment.getAuthor().getUsername().equals(username)) {
@@ -67,6 +71,7 @@ public class CommentServiceImpl implements CommentService {
         }
         commentRepository.delete(comment);
     }
+
     @Override
     public CommentsDTO getComments(Integer adId) {
         Ad ad = adRepository.findById(adId)
