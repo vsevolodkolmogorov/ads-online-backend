@@ -32,8 +32,7 @@ public class CommentController {
             @PathVariable Integer id,
             @RequestBody CreateOrUpdateCommentDTO comment
     ) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        CommentDTO newComment = commentService.addComment(id, comment, username);
+        CommentDTO newComment = commentService.addComment(id, comment);
         return ResponseEntity.ok(newComment);
     }
 
@@ -43,8 +42,7 @@ public class CommentController {
             @PathVariable Integer adId,
             @PathVariable Integer commentId
     ) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        commentService.deleteComment(commentId, username);
+        commentService.deleteComment(commentId);
         return ResponseEntity.ok().build();
     }
 

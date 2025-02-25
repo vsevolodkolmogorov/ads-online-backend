@@ -1,6 +1,5 @@
 package ru.skypro.homework.service.impl;
 
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,6 +10,7 @@ import ru.skypro.homework.mapper.UserMapper;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.UserService;
+import ru.skypro.homework.utility.SecurityUtil;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -18,11 +18,13 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final SecurityUtil securityUtil;
 
-    public UserServiceImpl(UserMapper userMapper, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserMapper userMapper, UserRepository userRepository, PasswordEncoder passwordEncoder, SecurityUtil securityUtil) {
         this.userMapper = userMapper;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.securityUtil = securityUtil;
     }
 
     @Override
@@ -36,9 +38,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO updateUser(UpdateUserDTO updateUserDTO, String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public UserDTO updateUser(UpdateUserDTO updateUserDTO) {
+        User user = getCurrentUserEntity();
+
         user.setFirstName(updateUserDTO.getFirstName())
                 .setLastName(updateUserDTO.getLastName())
                 .setPhone(updateUserDTO.getPhone());
@@ -48,32 +50,44 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO getCurrentUser() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = getCurrentUserEntity();
+
         return userMapper.userToUserDTO(user);
     }
 
     @Override
-    public void updatePassword(NewPasswordDTO passwordDTO) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUsername(username)
+    public User getCurrentUserEntity() {
+        String username = securityUtil.getCurrentUsername();
+
+        return userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+
+    @Override
+    public void updatePassword(NewPasswordDTO passwordDTO) {
+        User user = getCurrentUserEntity();
+
         if (!passwordEncoder.matches(passwordDTO.getCurrentPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid password");
         }
+
         user.setPassword(passwordEncoder.encode(passwordDTO.getNewPassword()));
         userRepository.save(user);
     }
 
-    //заглушка
+    /**
+     * Обновление изображения пользователя.
+     * TODO: Реализовать сохранение изображения в базу данных ( с использованием облачного хранилища ).
+     *
+     * @return Измененный пользователь (пока не реализовано).
+     */
     @Override
     public UserDTO updateUserImage(MultipartFile image) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = getCurrentUserEntity();
         user.setImage("");
         userRepository.save(user);
+
         return userMapper.userToUserDTO(user);
     }
 }

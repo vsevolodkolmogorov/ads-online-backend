@@ -12,9 +12,9 @@ public interface AdService {
 
     AdDTO getAdById(Integer id);
 
-    AdDTO addAd(CreateOrUpdateAdDTO adDTO, MultipartFile image, String username);
+    AdDTO addAd(CreateOrUpdateAdDTO adDTO, MultipartFile image);
 
-    void deleteAd(Integer id, String username);
+    void deleteAd(Integer id);
 
     AdsDTO getAllAds();
 

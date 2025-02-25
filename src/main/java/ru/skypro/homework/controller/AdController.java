@@ -34,8 +34,7 @@ public class AdController {
             @RequestPart("properties") CreateOrUpdateAdDTO properties,
             @RequestPart("image") MultipartFile image
     ) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        AdDTO ad = adService.addAd(properties, image, username);
+        AdDTO ad = adService.addAd(properties, image);
         return ResponseEntity.status(HttpStatus.CREATED).body(ad);
     }
 
@@ -49,8 +48,7 @@ public class AdController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Удалить объявление")
     public ResponseEntity<Void> deleteAd(@PathVariable Integer id) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        adService.deleteAd(id, username);
+        adService.deleteAd(id);
         return ResponseEntity.noContent().build();
     }
 
