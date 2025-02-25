@@ -10,9 +10,11 @@ public interface UserService {
     UserDTO getUserDTO(User user);
     User createUserFromDTO(UserDTO userDTO);
 
-    UserDTO updateUser(UpdateUserDTO updateUserDTO, String username);
+    UserDTO updateUser(UpdateUserDTO updateUserDTO);
 
     UserDTO getCurrentUser();
+
+    User getCurrentUserEntity();
 
     void updatePassword(NewPasswordDTO passwordDTO);
 

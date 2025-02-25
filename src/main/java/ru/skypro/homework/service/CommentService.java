@@ -9,9 +9,9 @@ public interface CommentService {
     CommentDTO getCommentDTO (Comment comment);
     Comment createCommentFromDTO (CommentDTO commentDTO);
 
-    CommentDTO addComment(Integer adId, CreateOrUpdateCommentDTO commentDTO, String username);
+    CommentDTO addComment(Integer adId, CreateOrUpdateCommentDTO commentDTO);
 
-    void deleteComment(Integer commentId, String username);
+    void deleteComment(Integer commentId);
 
     CommentsDTO getComments(Integer adId);
 
