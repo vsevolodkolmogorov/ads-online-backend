@@ -1,5 +1,12 @@
 package ru.skypro.homework.dto;
 
-public enum RoleDTO {
-    USER, ADMIN
+import org.springframework.security.core.GrantedAuthority;
+
+public enum RoleDTO implements GrantedAuthority {
+    USER, ADMIN;
+
+    @Override
+    public String getAuthority() {
+        return name();
+    }
 }
