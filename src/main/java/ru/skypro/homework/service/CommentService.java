@@ -16,4 +16,6 @@ public interface CommentService {
     CommentsDTO getComments(Integer adId);
 
     CommentDTO updateComment(Integer commentId, CreateOrUpdateCommentDTO commentDTO);
+
+    boolean isCommentAuthor(Integer commentId, String username);
 }

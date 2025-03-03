@@ -2,6 +2,7 @@ package ru.skypro.homework.controller;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +28,7 @@ public class UserController {
     @ApiResponse(responseCode = "200")
     @ApiResponse(responseCode = "401")
     @ApiResponse(responseCode = "403")
+    @PreAuthorize("isAuthenticated()")
     @PatchMapping("/password")
     public ResponseEntity<Void> setPassword(@RequestBody NewPasswordDTO password) {
         userService.updatePassword(password);

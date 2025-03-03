@@ -1,11 +1,11 @@
 package ru.skypro.homework.service.impl;
 
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.AdDTO;
 import ru.skypro.homework.dto.AdsDTO;
 import ru.skypro.homework.dto.CreateOrUpdateAdDTO;
+import ru.skypro.homework.dto.RoleDTO;
 import ru.skypro.homework.mapper.AdMapper;
 import ru.skypro.homework.model.Ad;
 import ru.skypro.homework.model.User;
@@ -63,11 +63,9 @@ public class AdServiceImpl implements AdService {
 
     @Override
     public void deleteAd(Integer id) {
-        String username = securityUtil.getCurrentUsername();
-
-        Ad ad = adRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Ad not found"));
-        if (!ad.getAuthor().getUsername().equals(username)) {
+        User currentUser = userService.getCurrentUserEntity();
+        Ad ad = adRepository.findById(id).orElseThrow(() -> new RuntimeException("Ad not found"));
+        if (currentUser.getRole() != RoleDTO.ADMIN && !ad.getAuthor().getUsername().equals(currentUser.getUsername())) {
             throw new RuntimeException("You are not author of this ad");
         }
         adRepository.delete(ad);
@@ -84,8 +82,12 @@ public class AdServiceImpl implements AdService {
 
     @Override
     public AdDTO updateAd(Integer id, CreateOrUpdateAdDTO updateAd) {
+        User currentUser = userService.getCurrentUserEntity();
         Ad ad = adRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ad not found"));
+        if (currentUser.getRole() != RoleDTO.ADMIN && !ad.getAuthor().getUsername().equals(currentUser.getUsername())) {
+            throw new RuntimeException("You are not author of this ad");
+        }
         ad.setTitle(updateAd.getTitle())
                 .setPrice(updateAd.getPrice())
                 .setDescription(updateAd.getDescription());
@@ -101,6 +103,12 @@ public class AdServiceImpl implements AdService {
                 .map(adMapper::adToAdDTO)
                 .collect(Collectors.toList());
         return new AdsDTO(adDTOs.size(), adDTOs);
+    }
+
+    @Override
+    public boolean isAdAuthor(Integer adId, String username) {
+        Ad ad = adRepository.findById(adId).orElseThrow(() -> new RuntimeException("Ad not found"));
+        return ad.getAuthor().getUsername().equals(username);
     }
 
     /**

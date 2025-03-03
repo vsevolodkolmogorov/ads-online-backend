@@ -31,15 +31,11 @@ public class AuthServiceImpl implements AuthService {
         if (!manager.userExists(userName)) {
             return false;
         }
-
         UserDetails userDetails = manager.loadUserByUsername(userName);
-
         if (!encoder.matches(password, userDetails.getPassword())) {
             throw new BadCredentialsException("Invalid password for user: " + userName);
         }
-
         securityUtil.setSetAuthentication(userDetails);
-
         return true;
     }
 
