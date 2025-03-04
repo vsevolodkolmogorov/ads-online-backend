@@ -3,19 +3,19 @@ package ru.skypro.homework.controller;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPasswordDTO;
 import ru.skypro.homework.dto.UpdateUserDTO;
 import ru.skypro.homework.dto.UserDTO;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import ru.skypro.homework.service.UserService;
 
+import javax.validation.Valid;
+
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
@@ -29,7 +29,7 @@ public class UserController {
     @ApiResponse(responseCode = "401")
     @ApiResponse(responseCode = "403")
     @PreAuthorize("isAuthenticated()")
-    @PatchMapping("/password")
+    @PostMapping("/set_password")
     public ResponseEntity<Void> setPassword(@RequestBody NewPasswordDTO password) {
         userService.updatePassword(password);
         return ResponseEntity.ok().build();
@@ -48,7 +48,7 @@ public class UserController {
     @ApiResponse(responseCode = "200")
     @ApiResponse(responseCode = "401")
     @PatchMapping("/me")
-    public ResponseEntity<UserDTO> updateUser(@RequestBody UpdateUserDTO updateUser) {
+    public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UpdateUserDTO updateUser) {
         UserDTO updatedUser = userService.updateUser(updateUser);
         return ResponseEntity.ok(updatedUser);
     }
