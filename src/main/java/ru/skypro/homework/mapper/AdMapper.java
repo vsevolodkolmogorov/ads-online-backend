@@ -10,6 +10,7 @@ import ru.skypro.homework.model.User;
 public interface AdMapper {
 
     @Mapping(target = "author", source = "author.id")
+    @Mapping(target = "image", expression = "java(ad.getImage() != null ? \"/images/\" + ad.getImage() : null)")
     AdDTO adToAdDTO(Ad ad);
 
     default Integer mapAuthorId(User user) {

@@ -9,8 +9,11 @@ import ru.skypro.homework.dto.UserDTO;
 import ru.skypro.homework.mapper.UserMapper;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.UserRepository;
+import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UserService;
 import ru.skypro.homework.utility.SecurityUtil;
+
+import java.io.IOException;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -19,12 +22,14 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final SecurityUtil securityUtil;
+    private final ImageService imageService;
 
-    public UserServiceImpl(UserMapper userMapper, UserRepository userRepository, PasswordEncoder passwordEncoder, SecurityUtil securityUtil) {
+    public UserServiceImpl(UserMapper userMapper, UserRepository userRepository, PasswordEncoder passwordEncoder, SecurityUtil securityUtil, ImageService imageService) {
         this.userMapper = userMapper;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.securityUtil = securityUtil;
+        this.imageService = imageService;
     }
 
     @Override
@@ -71,18 +76,16 @@ public class UserServiceImpl implements UserService {
         userRepository.save(currentUser);
     }
 
-    /**
-     * Обновление изображения пользователя.
-     * TODO: Реализовать сохранение изображения в базу данных ( с использованием облачного хранилища ).
-     *
-     * @return Измененный пользователь (пока не реализовано).
-     */
     @Override
     public UserDTO updateUserImage(MultipartFile image) {
-        User user = getCurrentUserEntity();
-        user.setImage("");
-        userRepository.save(user);
-
-        return userMapper.userToUserDTO(user);
+        try {
+            User user = getCurrentUserEntity();
+            String fileName = imageService.saveImage(image);
+            user.setImage(fileName);
+            userRepository.save(user);
+            return userMapper.userToUserDTO(user);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save image", e);
+        }
     }
 }
