@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.CommentDTO;
 import ru.skypro.homework.dto.CommentsDTO;
@@ -38,6 +38,7 @@ public class CommentController {
 
     @DeleteMapping("/{adId}/comments/{commentId}")
     @Operation(summary = "Удалить комментарий")
+    @PreAuthorize("hasRole('ADMIN') or @commentService.isCommentAuthor(#commentId, authentication.name)")
     public ResponseEntity<Void> deleteComment(
             @PathVariable Integer adId,
             @PathVariable Integer commentId
@@ -49,6 +50,7 @@ public class CommentController {
 
     @PatchMapping("/{adId}/comments/{commentId}")
     @Operation(summary = "Обновить комментарий")
+    @PreAuthorize("hasRole('ADMIN') or @commentService.isCommentAuthor(#commentId, authentication.name)")
     public ResponseEntity<CommentDTO> updateComment(
             @PathVariable Integer adId,
             @PathVariable Integer commentId,

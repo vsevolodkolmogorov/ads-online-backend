@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.AdDTO;
@@ -47,6 +47,7 @@ public class AdController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Удалить объявление")
+    @PreAuthorize("hasRole('ADMIN') or @adService.isAdAuthor(#id, authentication.name)")
     public ResponseEntity<Void> deleteAd(@PathVariable Integer id) {
         adService.deleteAd(id);
         return ResponseEntity.noContent().build();
@@ -54,6 +55,7 @@ public class AdController {
 
     @PatchMapping("/{id}")
     @Operation(summary = "Обновить объявление")
+    @PreAuthorize("hasRole('ADMIN') or @adService.isAdAuthor(#id, authentication.name)")
     public ResponseEntity<AdDTO> updateAd(
             @PathVariable Integer id,
             @RequestBody CreateOrUpdateAdDTO updateAd

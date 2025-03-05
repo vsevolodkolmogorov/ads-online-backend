@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.CommentDTO;
 import ru.skypro.homework.dto.CommentsDTO;
 import ru.skypro.homework.dto.CreateOrUpdateCommentDTO;
+import ru.skypro.homework.dto.RoleDTO;
 import ru.skypro.homework.mapper.CommentMapper;
 import ru.skypro.homework.model.Ad;
 import ru.skypro.homework.model.Comment;
@@ -62,11 +63,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void deleteComment(Integer commentId) {
-        String username = securityUtil.getCurrentUsername();
-
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new RuntimeException("Comment not found"));
-        if (!comment.getAuthor().getUsername().equals(username)) {
+        User currentUser = userService.getCurrentUserEntity();
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new RuntimeException("Comment not found"));
+        if (currentUser.getRole() != RoleDTO.ADMIN && !comment.getAuthor().getUsername().equals(currentUser.getUsername())) {
             throw new RuntimeException("You are not author of this comment");
         }
         commentRepository.delete(comment);
@@ -85,10 +84,20 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentDTO updateComment(Integer commentId, CreateOrUpdateCommentDTO commentDTO) {
+        User currentUser = userService.getCurrentUserEntity();
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
+        if (currentUser.getRole() != RoleDTO.ADMIN && !comment.getAuthor().getUsername().equals(currentUser.getUsername())) {
+            throw new RuntimeException("You are not author of this comment");
+        }
         comment.setText(commentDTO.getText());
         commentRepository.save(comment);
         return commentMapper.commentToCommentDTO(comment);
+    }
+    @Override
+    public boolean isCommentAuthor(Integer commentId, String username) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
+        return comment.getAuthor().getUsername().equals(username);
     }
 }

@@ -22,5 +22,7 @@ public interface AdService {
 
     AdsDTO getMyAds();
 
+    boolean isAdAuthor(Integer adId, String username);
+
     void updateAdImage(Integer id, MultipartFile image);
 }
