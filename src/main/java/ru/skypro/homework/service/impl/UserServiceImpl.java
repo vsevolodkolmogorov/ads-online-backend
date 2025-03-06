@@ -40,7 +40,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO updateUser(UpdateUserDTO updateUserDTO) {
         User user = getCurrentUserEntity();
-
         user.setFirstName(updateUserDTO.getFirstName())
                 .setLastName(updateUserDTO.getLastName())
                 .setPhone(updateUserDTO.getPhone());
@@ -51,14 +50,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO getCurrentUser() {
         User user = getCurrentUserEntity();
-
         return userMapper.userToUserDTO(user);
     }
 
     @Override
     public User getCurrentUserEntity() {
         String username = securityUtil.getCurrentUsername();
-
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
@@ -66,14 +63,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updatePassword(NewPasswordDTO passwordDTO) {
-        User user = getCurrentUserEntity();
-
-        if (!passwordEncoder.matches(passwordDTO.getCurrentPassword(), user.getPassword())) {
+        User currentUser = getCurrentUserEntity();
+        if (!passwordEncoder.matches(passwordDTO.getCurrentPassword(), currentUser.getPassword())) {
             throw new RuntimeException("Invalid password");
         }
-
-        user.setPassword(passwordEncoder.encode(passwordDTO.getNewPassword()));
-        userRepository.save(user);
+        currentUser.setPassword(passwordEncoder.encode(passwordDTO.getNewPassword()));
+        userRepository.save(currentUser);
     }
 
     /**
