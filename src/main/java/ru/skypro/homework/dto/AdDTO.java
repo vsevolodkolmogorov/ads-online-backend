@@ -3,7 +3,9 @@ package ru.skypro.homework.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Data
 public class AdDTO {
@@ -25,4 +27,9 @@ public class AdDTO {
 
     @Schema(description = "Заголовок объявления")
     private String title;
+
+    @Schema(description = "Описание объявления", minLength = 8, maxLength = 64)
+    @Size(min = 8, max = 64, message = "Описание должно содержать от 8 до 64 символов")
+    @NotBlank(message = "Описание не должно быть пустым")
+    private String description;
 }
