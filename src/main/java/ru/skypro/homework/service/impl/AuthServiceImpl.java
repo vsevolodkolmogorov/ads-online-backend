@@ -12,6 +12,9 @@ import ru.skypro.homework.security.CustomUserDetailsManager;
 import ru.skypro.homework.service.AuthService;
 import ru.skypro.homework.utility.SecurityUtil;
 
+/**
+ * Реализация интерфейса {@link AuthService}, предоставляющая операции, связанные с авторизацией.
+ */
 @Service
 public class AuthServiceImpl implements AuthService {
 
@@ -19,13 +22,20 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder encoder;
     private final SecurityUtil securityUtil;
 
-    public AuthServiceImpl(CustomUserDetailsManager manager,
-                           PasswordEncoder passwordEncoder, SecurityUtil securityUtil) {
+    public AuthServiceImpl(CustomUserDetailsManager manager, PasswordEncoder passwordEncoder, SecurityUtil securityUtil) {
         this.manager = manager;
         this.encoder = passwordEncoder;
         this.securityUtil = securityUtil;
     }
 
+    /**
+     * Аутентифицирует пользователя по его имени и паролю.
+     *
+     * @param userName имя пользователя
+     * @param password пароль пользователя
+     * @return true, если вход успешен; false, если пользователь не найден
+     * @throws BadCredentialsException если пароль неверный
+     */
     @Override
     public boolean login(String userName, String password) {
         if (!manager.userExists(userName)) {
@@ -39,6 +49,12 @@ public class AuthServiceImpl implements AuthService {
         return true;
     }
 
+    /**
+     * Регистрирует нового пользователя в системе.
+     *
+     * @param register объект DTO с данными для регистрации
+     * @return true, если регистрация успешна; false, если пользователь уже существует
+     */
     @Override
     public boolean register(RegisterDTO register) {
         if (manager.userExists(register.getUsername())) {
@@ -47,14 +63,7 @@ public class AuthServiceImpl implements AuthService {
 
         RoleDTO role = register.getRole();
 
-        User user = new User()
-                .setUsername(register.getUsername())
-                .setPassword(register.getPassword())
-                .setFirstName(register.getFirstName())
-                .setLastName(register.getLastName())
-                .setPhone(register.getPhone())
-                .setRole(role)
-                .setEnabled(true);
+        User user = new User().setUsername(register.getUsername()).setPassword(register.getPassword()).setFirstName(register.getFirstName()).setLastName(register.getLastName()).setPhone(register.getPhone()).setRole(role).setEnabled(true);
 
         CustomUserDetails userDetails = new CustomUserDetails(user);
 
