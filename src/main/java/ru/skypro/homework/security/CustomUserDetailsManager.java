@@ -9,6 +9,12 @@ import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.impl.UserServiceImpl;
 
+/**
+ * Кастомный менеджер пользователей, реализующий интерфейс {@link UserDetailsManager} для управления пользователями
+ * в системе безопасности Spring Security. Этот класс взаимодействует с репозиторием {@link UserRepository},
+ * сервисом {@link UserServiceImpl} и паролями через {@link PasswordEncoder}, предоставляя функциональность для
+ * создания, обновления, удаления пользователей, а также изменения пароля и проверки существования пользователей.
+ */
 @Component
 public class CustomUserDetailsManager implements UserDetailsManager {
 

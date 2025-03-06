@@ -5,6 +5,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+/**
+ * Класс, представляющий собой Data Transfer Object (DTO) для комментария.
+ * Используется для передачи данных о комментарии, включая информацию о его авторе, тексте и времени создания.
+ * Включает поля для ID автора комментария, аватара автора, имени автора, времени создания, ID комментария и текста комментария.
+ */
 @Data
 public class CommentDTO {
 

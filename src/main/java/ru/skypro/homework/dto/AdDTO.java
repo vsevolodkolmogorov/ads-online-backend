@@ -7,6 +7,12 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+/**
+ * Класс, представляющий собой Data Transfer Object (DTO) для объявления.
+ * Используется для передачи данных объявления в различных слоях приложения.
+ * Включает информацию о авторе объявления, изображении, идентификаторе объявления, цене, заголовке и описании.
+ * Все поля содержат соответствующие аннотации для валидации данных и их описания в Swagger.
+ */
 @Data
 public class AdDTO {
 

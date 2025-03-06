@@ -5,6 +5,10 @@ import lombok.Data;
 
 import javax.validation.constraints.Size;
 
+/**
+ * Класс, представляющий собой Data Transfer Object (DTO) для изменения пароля пользователя.
+ * Включает информацию о текущем пароле и новом пароле пользователя.
+ */
 @Data
 public class NewPasswordDTO {
 

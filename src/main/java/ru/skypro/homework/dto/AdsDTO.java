@@ -4,6 +4,11 @@ import lombok.Data;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 
+/**
+ * Класс, представляющий собой Data Transfer Object (DTO) для списка объявлений.
+ * Используется для передачи данных о группе объявлений, включая общее количество и сами объявления.
+ * Включает поле для общего количества объявлений, списка объявлений и отдельного объявления.
+ */
 @Data
 public class AdsDTO {
 

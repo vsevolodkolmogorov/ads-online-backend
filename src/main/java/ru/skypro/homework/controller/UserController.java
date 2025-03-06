@@ -14,6 +14,11 @@ import ru.skypro.homework.service.UserService;
 
 import javax.validation.Valid;
 
+/**
+ * Контроллер для управления пользователями.
+ * Этот контроллер предоставляет API для работы с пользователями, включая обновление пароля,
+ * получение информации о текущем пользователе, обновление данных пользователя и изменение аватара.
+ */
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -24,10 +29,16 @@ public class UserController {
         this.userService = userService;
     }
 
+    /**
+     * Обновление пароля авторизованного пользователя.
+     *
+     * @param password DTO с новым паролем.
+     * @return {@link ResponseEntity} со статусом 200 (OK) при успешном обновлении.
+     */
     @Operation(summary = "Обновление пароля")
-    @ApiResponse(responseCode = "200")
-    @ApiResponse(responseCode = "401")
-    @ApiResponse(responseCode = "403")
+    @ApiResponse(responseCode = "200", description = "Пароль успешно обновлен")
+    @ApiResponse(responseCode = "401", description = "Пользователь не авторизован")
+    @ApiResponse(responseCode = "403", description = "Доступ запрещен")
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/set_password")
     public ResponseEntity<Void> setPassword(@RequestBody NewPasswordDTO password) {
@@ -35,27 +46,44 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Получение информации о текущем авторизованном пользователе.
+     *
+     * @return {@link ResponseEntity} с {@link UserDTO}, содержащим данные пользователя.
+     */
     @Operation(summary = "Получение информации об авторизованном пользователе")
-    @ApiResponse(responseCode = "200")
-    @ApiResponse(responseCode = "401")
+    @ApiResponse(responseCode = "200", description = "Данные пользователя успешно получены")
+    @ApiResponse(responseCode = "401", description = "Пользователь не авторизован")
     @GetMapping("/me")
     public ResponseEntity<UserDTO> getAuthUser() {
         UserDTO user = userService.getCurrentUser();
         return ResponseEntity.ok(user);
     }
 
+    /**
+     * Обновление данных авторизованного пользователя.
+     *
+     * @param updateUser DTO с обновленной информацией о пользователе.
+     * @return {@link ResponseEntity} с обновленным {@link UserDTO}.
+     */
     @Operation(summary = "Обновление информации об авторизованном пользователе")
-    @ApiResponse(responseCode = "200")
-    @ApiResponse(responseCode = "401")
+    @ApiResponse(responseCode = "200", description = "Данные пользователя успешно обновлены")
+    @ApiResponse(responseCode = "401", description = "Пользователь не авторизован")
     @PatchMapping("/me")
     public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UpdateUserDTO updateUser) {
         UserDTO updatedUser = userService.updateUser(updateUser);
         return ResponseEntity.ok(updatedUser);
     }
 
+    /**
+     * Обновление аватара авторизованного пользователя.
+     *
+     * @param image Файл изображения для нового аватара.
+     * @return {@link ResponseEntity} с обновленным {@link UserDTO}.
+     */
     @Operation(summary = "Обновление аватара авторизованного пользователя")
-    @ApiResponse(responseCode = "200")
-    @ApiResponse(responseCode = "401")
+    @ApiResponse(responseCode = "200", description = "Аватар успешно обновлен")
+    @ApiResponse(responseCode = "401", description = "Пользователь не авторизован")
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<UserDTO> updateUserImage(@RequestParam("image") MultipartFile image) {
         UserDTO user = userService.updateUserImage(image);

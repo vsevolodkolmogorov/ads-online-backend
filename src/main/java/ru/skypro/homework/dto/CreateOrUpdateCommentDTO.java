@@ -5,6 +5,10 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+/**
+ * Класс, представляющий собой Data Transfer Object (DTO) для создания или обновления комментария.
+ * Включает информацию о тексте комментария.
+ */
 @Data
 public class CreateOrUpdateCommentDTO {
 

@@ -14,14 +14,24 @@ import ru.skypro.homework.dto.CreateOrUpdateAdDTO;
 import ru.skypro.homework.service.AdService;
 
 
+/**
+ * Контроллер для управления объявлениями.
+ * Этот класс предоставляет REST API для работы с объявлениями, включая их создание, удаление, обновление и просмотр.
+ * Доступ к определенным методам ограничен ролями и авторством объявления, используя аннотацию {@link PreAuthorize}.
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/ads")
-@Tag(name = "Объявления")
+@Tag(name = "Объявления", description = "Методы для работы с объявлениями")
 public class AdController {
 
     private final AdService adService;
 
+    /**
+     * Получает все объявления.
+     *
+     * @return {@link ResponseEntity} с объектом {@link AdsDTO}, содержащим список объявлений.
+     */
     @GetMapping
     @Operation(summary = "Получить все объявления")
     public ResponseEntity<AdsDTO> getAllAds() {
@@ -29,16 +39,26 @@ public class AdController {
         return ResponseEntity.ok(ads);
     }
 
+    /**
+     * Добавляет новое объявление.
+     *
+     * @param properties данные объявления.
+     * @param image      изображение объявления.
+     * @return {@link ResponseEntity} с объектом {@link AdDTO}, содержащим данные созданного объявления.
+     */
     @PostMapping(consumes = "multipart/form-data")
     @Operation(summary = "Добавить объявление")
-    public ResponseEntity<AdDTO> addAd(
-            @RequestPart("properties") CreateOrUpdateAdDTO properties,
-            @RequestPart("image") MultipartFile image
-    ) {
+    public ResponseEntity<AdDTO> addAd(@RequestPart("properties") CreateOrUpdateAdDTO properties, @RequestPart("image") MultipartFile image) {
         AdDTO ad = adService.addAd(properties, image);
         return ResponseEntity.status(HttpStatus.CREATED).body(ad);
     }
 
+    /**
+     * Получает объявление по его идентификатору.
+     *
+     * @param id идентификатор объявления.
+     * @return {@link ResponseEntity} с объектом {@link AdDTO}, содержащим данные объявления.
+     */
     @GetMapping("/{id}")
     @Operation(summary = "Получить объявление")
     public ResponseEntity<AdDTO> getAd(@PathVariable Integer id) {
@@ -46,6 +66,12 @@ public class AdController {
         return ResponseEntity.ok(ad);
     }
 
+    /**
+     * Удаляет объявление (доступно только администратору или автору объявления).
+     *
+     * @param id идентификатор объявления.
+     * @return {@link ResponseEntity} без содержимого при успешном удалении.
+     */
     @DeleteMapping("/{id}")
     @Operation(summary = "Удалить объявление")
     @PreAuthorize("hasRole('ADMIN') or @adService.isAdAuthor(#id, authentication.name)")
@@ -54,17 +80,26 @@ public class AdController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Обновляет данные объявления (доступно только администратору или автору объявления).
+     *
+     * @param id       идентификатор объявления.
+     * @param updateAd данные для обновления объявления.
+     * @return {@link ResponseEntity} с объектом {@link AdDTO}, содержащим обновленные данные объявления.
+     */
     @PatchMapping("/{id}")
     @Operation(summary = "Обновить объявление")
     @PreAuthorize("hasRole('ADMIN') or @adService.isAdAuthor(#id, authentication.name)")
-    public ResponseEntity<AdDTO> updateAd(
-            @PathVariable Integer id,
-            @RequestBody CreateOrUpdateAdDTO updateAd
-    ) {
+    public ResponseEntity<AdDTO> updateAd(@PathVariable Integer id, @RequestBody CreateOrUpdateAdDTO updateAd) {
         AdDTO updatedAd = adService.updateAd(id, updateAd);
         return ResponseEntity.ok(updatedAd);
     }
 
+    /**
+     * Получает объявления текущего пользователя.
+     *
+     * @return {@link ResponseEntity} с объектом {@link AdsDTO}, содержащим список объявлений текущего пользователя.
+     */
     @GetMapping("/me")
     @Operation(summary = "Получить мои объявления")
     public ResponseEntity<AdsDTO> getMyAds() {
@@ -72,13 +107,18 @@ public class AdController {
         return ResponseEntity.ok(ads);
     }
 
+    /**
+     * Обновляет изображение объявления.
+     *
+     * @param id    идентификатор объявления.
+     * @param image новое изображение объявления.
+     * @return {@link ResponseEntity} с пустым телом при успешном обновлении.
+     */
     @PatchMapping(value = "/{id}/image", consumes = "multipart/form-data")
     @Operation(summary = "Обновить изображение")
-    public ResponseEntity<Void> updateAdImage(
-            @PathVariable Integer id,
-            @RequestParam("image") MultipartFile image
-    ) {
+    public ResponseEntity<Void> updateAdImage(@PathVariable Integer id, @RequestParam("image") MultipartFile image) {
         adService.updateAdImage(id, image);
         return ResponseEntity.ok().build();
     }
 }
+

@@ -5,6 +5,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.Size;
 import javax.validation.constraints.Email;
 
+/**
+ * Класс, представляющий собой расширенный Data Transfer Object (DTO) для объявления.
+ * Включает более детализированную информацию о самом объявлении и его авторе.
+ */
 @Data
 public class ExtendedAdDTO {
 

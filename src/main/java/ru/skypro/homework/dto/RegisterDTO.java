@@ -6,6 +6,10 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+/**
+ * Класс, представляющий собой Data Transfer Object (DTO) для регистрации пользователя.
+ * Включает информацию о логине, пароле, имени, фамилии, телефоне и роли пользователя.
+ */
 @Data
 public class RegisterDTO {
 
