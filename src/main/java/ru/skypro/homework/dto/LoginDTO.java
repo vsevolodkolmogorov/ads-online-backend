@@ -6,6 +6,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+/**
+ * Класс, представляющий собой Data Transfer Object (DTO) для данных входа пользователя.
+ * Включает информацию о логине и пароле пользователя.
+ */
 @Data
 public class LoginDTO {
 

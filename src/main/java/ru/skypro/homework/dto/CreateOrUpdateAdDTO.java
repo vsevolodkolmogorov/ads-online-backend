@@ -5,6 +5,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.*;
 
+/**
+ * Класс, представляющий собой Data Transfer Object (DTO) для создания или обновления объявления.
+ * Включает информацию о заголовке, цене и описании объявления.
+ */
 @Data
 public class CreateOrUpdateAdDTO {
 

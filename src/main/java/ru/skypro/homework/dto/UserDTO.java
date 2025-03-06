@@ -7,6 +7,11 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+/**
+ * Класс, представляющий собой Data Transfer Object (DTO) для пользователя.
+ * Включает информацию о пользователе, включая ID, логин, имя, фамилию, телефон, роль и ссылку на аватар.
+ */
+
 @Data
 public class UserDTO {
 

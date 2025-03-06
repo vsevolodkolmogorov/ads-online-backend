@@ -5,6 +5,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.Size;
 import javax.validation.constraints.NotBlank;
 
+/**
+ * Класс, представляющий собой Data Transfer Object (DTO) для обновления данных пользователя.
+ * Включает информацию об имени, фамилии и телефоне пользователя.
+ */
 @Data
 public class UpdateUserDTO {
 
