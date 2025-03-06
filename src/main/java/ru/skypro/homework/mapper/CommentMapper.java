@@ -7,6 +7,12 @@ import ru.skypro.homework.model.Ad;
 import ru.skypro.homework.model.Comment;
 import ru.skypro.homework.model.User;
 
+/**
+ * Интерфейс, использующий библиотеку MapStruct для автоматического преобразования между объектами типа {@link Comment} и {@link CommentDTO}.
+ * Этот интерфейс выполняет маппинг данных, таких как автор комментария, изображение автора, имя автора, а также дату создания комментария.
+ * Использует {@link UserMapper} для работы с маппингом данных пользователя, связанного с комментарием.
+ * MapStruct автоматически генерирует реализацию этого интерфейса для эффективного преобразования между объектами.
+ */
 @Mapper(componentModel = "spring", uses = {UserMapper.class})
 public interface CommentMapper {
 
