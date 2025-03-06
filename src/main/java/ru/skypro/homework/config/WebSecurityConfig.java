@@ -10,19 +10,23 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.List;
+import ru.skypro.homework.filter.BasicAuthCorsFilter;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+
+/**
+ * Класс конфигурации безопасности веб-приложения с использованием Spring Security.
+ * Этот класс настраивает аутентификацию и авторизацию, а также определяет правила для CORS и CSRF защиты.
+ * Он включает настройку пароля через BCrypt и конфигурацию фильтров безопасности.
+ * Этот класс обеспечивает базовую безопасность для приложения, включая настройки для аутентификации, авторизации и защиты от атак.
+ */
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfig  {
+public class WebSecurityConfig {
 
+    private final BasicAuthCorsFilter basicAuthCorsFilter;
 
     private static final String[] AUTH_WHITELIST = {
             "/swagger-resources/**",
@@ -33,11 +37,21 @@ public class WebSecurityConfig  {
             "/register"
     };
 
+    WebSecurityConfig(BasicAuthCorsFilter basicAuthCorsFilter) {
+        this.basicAuthCorsFilter = basicAuthCorsFilter;
+    }
 
+    /**
+     * Настройка фильтра безопасности, включая CORS, авторизацию и аутентификацию.
+     *
+     * @param http объект {@link HttpSecurity} для конфигурации безопасности веб-приложения.
+     * @return {@link SecurityFilterChain} с настройками безопасности.
+     * @throws Exception если возникает ошибка при настройке безопасности.
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .cors(cors -> cors.configurationSource(basicAuthCorsFilter.corsConfigurationSource()))
                 .authorizeHttpRequests(
                         authorization ->
                                 authorization
@@ -48,27 +62,17 @@ public class WebSecurityConfig  {
                                         .authenticated())
                 .httpBasic(withDefaults())
                 .securityContext(securityContext ->
-                securityContext.securityContextRepository(new HttpSessionSecurityContextRepository()));
+                        securityContext.securityContextRepository(new HttpSessionSecurityContextRepository()));
         return http.build();
     }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
-
+    /**
+     * Настройка кодировщика паролей для использования BCrypt.
+     *
+     * @return {@link PasswordEncoder}, использующий алгоритм BCrypt для хэширования паролей.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 }

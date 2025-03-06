@@ -9,6 +9,15 @@ import ru.skypro.homework.model.User;
 import java.util.Collection;
 import java.util.Collections;
 
+/**
+ * Класс, реализующий интерфейс {@link UserDetails} для представления пользователя
+ * в рамках системы безопасности Spring Security. Этот класс предоставляет информацию
+ * о пользователе, такую как имя пользователя, пароль, роль, а также дополнительные данные,
+ * такие как имя, фамилия, телефон и изображение профиля.
+ * <p>
+ * Он используется в связке с {@link CustomUserDetailsManager} для управления данными пользователей
+ * и авторизацией в приложении.
+ */
 public class CustomUserDetails implements UserDetails {
     private final User user;
 
@@ -78,6 +87,4 @@ public class CustomUserDetails implements UserDetails {
     public RoleDTO getRole() {
         return user.getRole();
     }
-
-
 }
