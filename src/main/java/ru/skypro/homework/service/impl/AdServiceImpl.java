@@ -1,5 +1,6 @@
 package ru.skypro.homework.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.AdDTO;
@@ -11,7 +12,6 @@ import ru.skypro.homework.model.Ad;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.service.AdService;
-import ru.skypro.homework.utility.SecurityUtil;
 
 import java.io.IOException;
 import java.util.List;
@@ -21,19 +21,13 @@ import java.util.stream.Collectors;
  * Реализация интерфейса {@link AdService}, предоставляющая операции, связанные с товарами.
  */
 @Service
+@RequiredArgsConstructor
 public class AdServiceImpl implements AdService {
 
     private final AdMapper adMapper;
     private final AdRepository adRepository;
     private final UserServiceImpl userService;
     private final ImageServiceImpl imageServiceImpl;
-
-    public AdServiceImpl(AdMapper adMapper, AdRepository adRepository, UserServiceImpl userService, ImageServiceImpl imageServiceImpl) {
-        this.adMapper = adMapper;
-        this.adRepository = adRepository;
-        this.userService = userService;
-        this.imageServiceImpl = imageServiceImpl;
-    }
 
     /**
      * Преобразует объект {@link Ad} в {@link AdDTO}.

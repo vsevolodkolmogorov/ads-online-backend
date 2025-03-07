@@ -1,5 +1,6 @@
 package ru.skypro.homework.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +19,7 @@ import java.io.IOException;
  * Реализация интерфейса {@link UserService}, предоставляющая операции, связанные с пользователями.
  */
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
@@ -25,14 +27,6 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final SecurityUtil securityUtil;
     private final ImageServiceImpl imageServiceImpl;
-
-    public UserServiceImpl(UserMapper userMapper, UserRepository userRepository, PasswordEncoder passwordEncoder, SecurityUtil securityUtil, ImageServiceImpl imageServiceImpl) {
-        this.userMapper = userMapper;
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.securityUtil = securityUtil;
-        this.imageServiceImpl = imageServiceImpl;
-    }
 
     /**
      * Преобразует сущность {@link User} в {@link UserDTO}.

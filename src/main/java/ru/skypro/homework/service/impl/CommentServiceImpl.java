@@ -1,5 +1,6 @@
 package ru.skypro.homework.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.CommentDTO;
 import ru.skypro.homework.dto.CommentsDTO;
@@ -21,19 +22,13 @@ import java.util.stream.Collectors;
  * Реализация интерфейса {@link CommentService}, предоставляющая операции, связанные с комментариями.
  */
 @Service
+@RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
 
     private final CommentMapper commentMapper;
     private final CommentRepository commentRepository;
     private final AdRepository adRepository;
     private final UserServiceImpl userService;
-
-    public CommentServiceImpl(CommentMapper commentMapper, CommentRepository commentRepository, AdRepository adRepository, UserServiceImpl userService) {
-        this.commentMapper = commentMapper;
-        this.commentRepository = commentRepository;
-        this.adRepository = adRepository;
-        this.userService = userService;
-    }
 
     /**
      * Преобразует сущность Comment в DTO.

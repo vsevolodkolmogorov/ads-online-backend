@@ -1,5 +1,6 @@
 package ru.skypro.homework.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,17 +17,12 @@ import ru.skypro.homework.service.impl.UserServiceImpl;
  * создания, обновления, удаления пользователей, а также изменения пароля и проверки существования пользователей.
  */
 @Component
+@RequiredArgsConstructor
 public class CustomUserDetailsManager implements UserDetailsManager {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserServiceImpl userService;
-
-    public CustomUserDetailsManager(UserRepository userRepository, PasswordEncoder passwordEncoder, UserServiceImpl userService) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.userService = userService;
-    }
 
     @Override
     public void createUser(UserDetails userDetails) {

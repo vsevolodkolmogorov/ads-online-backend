@@ -14,7 +14,6 @@ import ru.skypro.homework.service.AuthService;
  * Контроллер для регистрации пользователей.
  * Этот контроллер предоставляет API для регистрации новых пользователей в системе.
  */
-@Slf4j
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
 @RequestMapping("/register")

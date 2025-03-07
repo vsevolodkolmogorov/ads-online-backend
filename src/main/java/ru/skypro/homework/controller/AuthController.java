@@ -16,7 +16,6 @@ import ru.skypro.homework.service.AuthService;
  * Используется аннотация {@link CrossOrigin} для разрешения кросс-доменных запросов с фронтенда.
  * Логирование осуществляется с помощью {@link Slf4j}.
  */
-@Slf4j
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
 @RequestMapping("/login")

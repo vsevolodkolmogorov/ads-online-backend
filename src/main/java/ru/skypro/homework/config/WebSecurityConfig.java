@@ -1,5 +1,6 @@
 package ru.skypro.homework.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -24,6 +25,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@RequiredArgsConstructor
 public class WebSecurityConfig {
 
     private final BasicAuthCorsFilter basicAuthCorsFilter;
@@ -36,10 +38,6 @@ public class WebSecurityConfig {
             "/login",
             "/register"
     };
-
-    WebSecurityConfig(BasicAuthCorsFilter basicAuthCorsFilter) {
-        this.basicAuthCorsFilter = basicAuthCorsFilter;
-    }
 
     /**
      * Настройка фильтра безопасности, включая CORS, авторизацию и аутентификацию.
@@ -55,11 +53,9 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(
                         authorization ->
                                 authorization
-                                        .mvcMatchers(AUTH_WHITELIST)
-                                        .permitAll()
+                                        .mvcMatchers(AUTH_WHITELIST).permitAll()
                                         .mvcMatchers(HttpMethod.DELETE, "/ads/**", "/users/**").hasRole("ADMIN")
-                                        .mvcMatchers("/ads/**", "/users/**")
-                                        .authenticated())
+                                        .mvcMatchers("/ads/**", "/users/**").authenticated())
                 .httpBasic(withDefaults())
                 .securityContext(securityContext ->
                         securityContext.securityContextRepository(new HttpSessionSecurityContextRepository()));

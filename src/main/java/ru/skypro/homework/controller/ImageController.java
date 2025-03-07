@@ -1,5 +1,6 @@
 package ru.skypro.homework.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,18 +13,10 @@ import ru.skypro.homework.service.impl.ImageServiceImpl;
  */
 @RestController
 @RequestMapping("/images")
+@RequiredArgsConstructor
 public class ImageController {
 
     private final ImageServiceImpl imageServiceImpl;
-
-    /**
-     * Конструктор контроллера, принимающий сервис для работы с изображениями.
-     *
-     * @param imageServiceImpl Сервис для получения байтов изображений
-     */
-    public ImageController(ImageServiceImpl imageServiceImpl) {
-        this.imageServiceImpl = imageServiceImpl;
-    }
 
     /**
      * Возвращает изображение по его имени.

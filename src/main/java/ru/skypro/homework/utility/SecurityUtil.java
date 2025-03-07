@@ -21,14 +21,7 @@ public class SecurityUtil {
     public String getCurrentUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication == null) {
-            System.out.println("Authentication is null");
-            return null;
-        }
-
-        System.out.println("Authentication type: " + authentication.getClass().getSimpleName());
-        System.out.println("Principal: " + authentication.getPrincipal());
-        System.out.println("Authorities: " + authentication.getAuthorities());
+        if (authentication == null) return null;
 
         return authentication.getName();
     }

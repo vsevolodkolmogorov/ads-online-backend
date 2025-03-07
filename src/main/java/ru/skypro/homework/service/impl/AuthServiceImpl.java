@@ -1,5 +1,6 @@
 package ru.skypro.homework.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,17 +17,12 @@ import ru.skypro.homework.utility.SecurityUtil;
  * Реализация интерфейса {@link AuthService}, предоставляющая операции, связанные с авторизацией.
  */
 @Service
+@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
     private final CustomUserDetailsManager manager;
     private final PasswordEncoder encoder;
     private final SecurityUtil securityUtil;
-
-    public AuthServiceImpl(CustomUserDetailsManager manager, PasswordEncoder passwordEncoder, SecurityUtil securityUtil) {
-        this.manager = manager;
-        this.encoder = passwordEncoder;
-        this.securityUtil = securityUtil;
-    }
 
     /**
      * Аутентифицирует пользователя по его имени и паролю.
