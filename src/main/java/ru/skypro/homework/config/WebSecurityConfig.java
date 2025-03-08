@@ -47,19 +47,26 @@ public class WebSecurityConfig {
      * @throws Exception если возникает ошибка при настройке безопасности.
      */
     @Bean
+
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .cors(cors -> cors.configurationSource(basicAuthCorsFilter.corsConfigurationSource()))
                 .authorizeHttpRequests(
                         authorization ->
                                 authorization
-                                        .mvcMatchers(AUTH_WHITELIST).permitAll()
-                                        .mvcMatchers(HttpMethod.DELETE, "/ads/**", "/users/**").hasRole("ADMIN")
+                                        .mvcMatchers(AUTH_WHITELIST)
+                                        .permitAll()
+                                        .mvcMatchers(HttpMethod.GET, "/ads/**").permitAll()
+                                        .mvcMatchers(HttpMethod.GET, "/ads/*/comments").permitAll()
+                                        .mvcMatchers(HttpMethod.PATCH, "/ads/**", "/users/**").authenticated()
+                                        .mvcMatchers(HttpMethod.PUT, "/ads/**").authenticated()
+                                        .mvcMatchers(HttpMethod.DELETE, "/ads/**", "/users/**").authenticated()
                                         .mvcMatchers("/ads/**", "/users/**").authenticated())
                 .httpBasic(withDefaults())
                 .securityContext(securityContext ->
                         securityContext.securityContextRepository(new HttpSessionSecurityContextRepository()));
         return http.build();
+
     }
 
     /**

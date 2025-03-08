@@ -4,6 +4,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.AdDTO;
 import ru.skypro.homework.dto.AdsDTO;
 import ru.skypro.homework.dto.CreateOrUpdateAdDTO;
+import ru.skypro.homework.dto.ExtendedAdDTO;
 import ru.skypro.homework.model.Ad;
 
 /**
@@ -17,7 +18,7 @@ import ru.skypro.homework.model.Ad;
  * - Обновление существующего объявления {@link #updateAd(Integer, CreateOrUpdateAdDTO)}.
  * - Получение объявлений пользователя {@link #getMyAds()}.
  * - Создание сущности {@link Ad} на основе данных {@link AdDTO} {@link #createAdFromDTO(AdDTO)}.
- * - Проверка, является ли пользователь автором объявления {@link #isAdAuthor(Integer, String)}.
+ * - Проверка, является ли пользователь автором объявления {@link #isAdAuthor(Integer, Integer)}.
  * - Удаление объявления {@link #deleteAd(Integer)}.
  * - Обновление изображения объявления {@link #updateAdImage(Integer, MultipartFile)}.
  *
@@ -27,7 +28,7 @@ public interface AdService {
 
     AdDTO getAdDTO(Ad ad);
 
-    AdDTO getAdById(Integer id);
+    ExtendedAdDTO getAdById(Integer id);
 
     AdDTO addAd(CreateOrUpdateAdDTO adDTO, MultipartFile image);
 
@@ -39,7 +40,7 @@ public interface AdService {
 
     Ad createAdFromDTO(AdDTO adDTO);
 
-    boolean isAdAuthor(Integer adId, String username);
+    boolean isAdAuthor(Integer adId, Integer userId);
 
     void deleteAd(Integer id);
 

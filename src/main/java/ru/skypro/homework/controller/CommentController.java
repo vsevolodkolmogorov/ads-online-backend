@@ -61,7 +61,7 @@ public class CommentController {
      */
     @DeleteMapping("/{adId}/comments/{commentId}")
     @Operation(summary = "Удалить комментарий")
-    @PreAuthorize("hasRole('ADMIN') or @commentService.isCommentAuthor(#commentId, authentication.name)")
+    @PreAuthorize("hasRole('ADMIN') or @commentServiceImpl.isCommentAuthor(#commentId, authentication.name)")
     public ResponseEntity<Void> deleteComment(@PathVariable Integer adId, @PathVariable Integer commentId) {
         commentService.deleteComment(commentId);
         return ResponseEntity.ok().build();
@@ -78,7 +78,7 @@ public class CommentController {
      */
     @PatchMapping("/{adId}/comments/{commentId}")
     @Operation(summary = "Обновить комментарий")
-    @PreAuthorize("hasRole('ADMIN') or @commentService.isCommentAuthor(#commentId, authentication.name)")
+    @PreAuthorize("hasRole('ADMIN') or @commentServiceImpl.isCommentAuthor(#commentId, authentication.name)")
     public ResponseEntity<CommentDTO> updateComment(@PathVariable Integer adId, @PathVariable Integer commentId, @RequestBody CreateOrUpdateCommentDTO comment) {
         CommentDTO updatedComment = commentService.updateComment(commentId, comment);
         return ResponseEntity.ok(updatedComment);

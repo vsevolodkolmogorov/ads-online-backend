@@ -1,16 +1,14 @@
 package ru.skypro.homework.service.impl;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.AdDTO;
-import ru.skypro.homework.dto.AdsDTO;
-import ru.skypro.homework.dto.CreateOrUpdateAdDTO;
-import ru.skypro.homework.dto.RoleDTO;
+import ru.skypro.homework.dto.*;
 import ru.skypro.homework.mapper.AdMapper;
+import ru.skypro.homework.mapper.ExtendedAdMapper;
 import ru.skypro.homework.model.Ad;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.AdRepository;
+import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdService;
 
 import java.io.IOException;
@@ -21,13 +19,25 @@ import java.util.stream.Collectors;
  * Реализация интерфейса {@link AdService}, предоставляющая операции, связанные с товарами.
  */
 @Service
-@RequiredArgsConstructor
 public class AdServiceImpl implements AdService {
 
     private final AdMapper adMapper;
     private final AdRepository adRepository;
     private final UserServiceImpl userService;
     private final ImageServiceImpl imageServiceImpl;
+    private final ExtendedAdMapper extendedAdMapper;
+    private final UserRepository userRepository;
+
+
+    public AdServiceImpl(AdMapper adMapper, AdRepository adRepository, UserServiceImpl userService, ImageServiceImpl imageServiceImpl,
+                         ExtendedAdMapper extendedAdMapper, UserRepository userRepository) {
+        this.adMapper = adMapper;
+        this.adRepository = adRepository;
+        this.userService = userService;
+        this.imageServiceImpl = imageServiceImpl;
+        this.extendedAdMapper = extendedAdMapper;
+        this.userRepository = userRepository;
+    }
 
     /**
      * Преобразует объект {@link Ad} в {@link AdDTO}.
@@ -58,9 +68,13 @@ public class AdServiceImpl implements AdService {
      * @return DTO объявления
      */
     @Override
-    public AdDTO getAdById(Integer id) {
+    public ExtendedAdDTO getAdById(Integer id) {
         Ad ad = adRepository.findById(id).orElseThrow(() -> new RuntimeException("Ad not found"));
-        return adMapper.adToAdDTO(ad);
+        ExtendedAdDTO extendedAdDTO = extendedAdMapper.adToExtendedAdDTO(ad);
+        extendedAdDTO.setEmail(ad.getAuthor().getUsername());
+        extendedAdDTO.setAuthorFirstName(ad.getAuthor().getFirstName());
+        extendedAdDTO.setAuthorLastName(ad.getAuthor().getLastName());
+        return extendedAdDTO;
     }
 
     /**
@@ -75,11 +89,8 @@ public class AdServiceImpl implements AdService {
         try {
             User author = userService.getCurrentUserEntity();
             String imageFileName = imageServiceImpl.saveImage(image);
-
             Ad ad = new Ad().setTitle(adDTO.getTitle()).setPrice(adDTO.getPrice()).setDescription(adDTO.getDescription()).setAuthor(author).setImage(imageFileName);
-
             ad = adRepository.save(ad);
-
             return adMapper.adToAdDTO(ad);
         } catch (IOException e) {
             throw new RuntimeException("Failed to save ad image", e);
@@ -95,7 +106,7 @@ public class AdServiceImpl implements AdService {
     public void deleteAd(Integer id) {
         User currentUser = userService.getCurrentUserEntity();
         Ad ad = adRepository.findById(id).orElseThrow(() -> new RuntimeException("Ad not found"));
-        if (currentUser.getRole() != RoleDTO.ADMIN && !ad.getAuthor().getUsername().equals(currentUser.getUsername())) {
+        if (currentUser.getRole() != RoleDTO.ADMIN && ad.getAuthor().getId() != currentUser.getId()) {
             throw new RuntimeException("You are not author of this ad");
         }
         adRepository.delete(ad);
@@ -124,7 +135,7 @@ public class AdServiceImpl implements AdService {
     public AdDTO updateAd(Integer id, CreateOrUpdateAdDTO updateAd) {
         User currentUser = userService.getCurrentUserEntity();
         Ad ad = adRepository.findById(id).orElseThrow(() -> new RuntimeException("Ad not found"));
-        if (currentUser.getRole() != RoleDTO.ADMIN && !ad.getAuthor().getUsername().equals(currentUser.getUsername())) {
+        if (currentUser.getRole() != RoleDTO.ADMIN && ad.getAuthor().getId() != currentUser.getId()) {
             throw new RuntimeException("You are not author of this ad");
         }
         ad.setTitle(updateAd.getTitle()).setPrice(updateAd.getPrice()).setDescription(updateAd.getDescription());
@@ -149,13 +160,13 @@ public class AdServiceImpl implements AdService {
      * Проверяет, является ли пользователь автором объявления.
      *
      * @param adId     идентификатор объявления
-     * @param username имя пользователя
+     * @param userId id пользователя
      * @return true, если пользователь - автор объявления
      */
     @Override
-    public boolean isAdAuthor(Integer adId, String username) {
+    public boolean isAdAuthor(Integer adId, Integer userId) {
         Ad ad = adRepository.findById(adId).orElseThrow(() -> new RuntimeException("Ad not found"));
-        return ad.getAuthor().getUsername().equals(username);
+        return ad.getAuthor().getId() == userId;
     }
 
     /**
