@@ -1,5 +1,6 @@
 package ru.skypro.homework.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import ru.skypro.homework.service.impl.ImageServiceImpl;
 @RestController
 @RequestMapping("/images")
 @RequiredArgsConstructor
+@Tag(name = "Изображения", description = "Методы для работы с изображениями")
 public class ImageController {
 
     private final ImageServiceImpl imageServiceImpl;

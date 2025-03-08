@@ -2,6 +2,7 @@ package ru.skypro.homework.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import ru.skypro.homework.service.AuthService;
 @RestController
 @RequestMapping("/register")
 @RequiredArgsConstructor
+@Tag(name = "Регистрация", description = "Методы для работы с регистрации")
 public class RegisterController {
 
     private final AuthService authService;
