@@ -1,5 +1,6 @@
 package ru.skypro.homework.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -24,6 +25,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@RequiredArgsConstructor
 public class WebSecurityConfig {
 
     private final BasicAuthCorsFilter basicAuthCorsFilter;
@@ -36,10 +38,6 @@ public class WebSecurityConfig {
             "/login",
             "/register"
     };
-
-    WebSecurityConfig(BasicAuthCorsFilter basicAuthCorsFilter) {
-        this.basicAuthCorsFilter = basicAuthCorsFilter;
-    }
 
     /**
      * Настройка фильтра безопасности, включая CORS, авторизацию и аутентификацию.
@@ -62,8 +60,7 @@ public class WebSecurityConfig {
                                         .mvcMatchers(HttpMethod.PATCH, "/ads/**", "/users/**").authenticated()
                                         .mvcMatchers(HttpMethod.PUT, "/ads/**").authenticated()
                                         .mvcMatchers(HttpMethod.DELETE, "/ads/**", "/users/**").authenticated()
-                                        .mvcMatchers("/ads/**", "/users/**")
-                                        .authenticated())
+                                        .mvcMatchers("/ads/**", "/users/**").authenticated())
                 .httpBasic(withDefaults())
                 .securityContext(securityContext ->
                         securityContext.securityContextRepository(new HttpSessionSecurityContextRepository()));
@@ -79,5 +76,4 @@ public class WebSecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 }

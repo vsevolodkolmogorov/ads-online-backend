@@ -3,16 +3,15 @@ package ru.skypro.homework.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.AdDTO;
-import ru.skypro.homework.dto.AdsDTO;
-import ru.skypro.homework.dto.CreateOrUpdateAdDTO;
-import ru.skypro.homework.dto.RoleDTO;
+import ru.skypro.homework.dto.*;
 import ru.skypro.homework.exception.AdNotFoundException;
 import ru.skypro.homework.exception.UnauthorizedAdDeletionException;
 import ru.skypro.homework.mapper.AdMapper;
+import ru.skypro.homework.mapper.ExtendedAdMapper;
 import ru.skypro.homework.model.Ad;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.AdRepository;
+import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdService;
 
 import java.io.IOException;
@@ -29,13 +28,17 @@ public class AdServiceImpl implements AdService {
     private final AdMapper adMapper;
     private final AdRepository adRepository;
     private final UserServiceImpl userService;
+    private final ExtendedAdMapper extendedAdMapper;
     private final ImageServiceImpl imageServiceImpl;
+    private final UserRepository userRepository;
 
-    public AdServiceImpl(AdMapper adMapper, AdRepository adRepository, UserServiceImpl userService, ImageServiceImpl imageServiceImpl) {
+    public AdServiceImpl(AdMapper adMapper, AdRepository adRepository, UserServiceImpl userService, ExtendedAdMapper extendedAdMapper, ImageServiceImpl imageServiceImpl, UserRepository userRepository) {
         this.adMapper = adMapper;
         this.adRepository = adRepository;
         this.userService = userService;
+        this.extendedAdMapper = extendedAdMapper;
         this.imageServiceImpl = imageServiceImpl;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -67,9 +70,15 @@ public class AdServiceImpl implements AdService {
      * @return DTO объявления
      */
     @Override
-    public AdDTO getAdById(Integer id) {
+    public ExtendedAdDTO getAdById(Integer id) {
         Ad ad = adRepository.findById(id).orElseThrow(() -> new RuntimeException("Ad not found"));
-        return adMapper.adToAdDTO(ad);
+        ExtendedAdDTO extendedAdDTO = extendedAdMapper.adToExtendedAdDTO(ad);
+
+        extendedAdDTO.setEmail(ad.getAuthor().getUsername());
+        extendedAdDTO.setAuthorFirstName(ad.getAuthor().getFirstName());
+        extendedAdDTO.setAuthorLastName(ad.getAuthor().getLastName());
+
+        return extendedAdDTO;
     }
 
     /**

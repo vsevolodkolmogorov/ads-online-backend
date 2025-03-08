@@ -4,6 +4,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.AdDTO;
 import ru.skypro.homework.dto.AdsDTO;
 import ru.skypro.homework.dto.CreateOrUpdateAdDTO;
+import ru.skypro.homework.dto.ExtendedAdDTO;
 import ru.skypro.homework.model.Ad;
 
 /**
@@ -27,7 +28,7 @@ public interface AdService {
 
     AdDTO getAdDTO(Ad ad);
 
-    AdDTO getAdById(Integer id);
+    ExtendedAdDTO getAdById(Integer id);
 
     AdDTO addAd(CreateOrUpdateAdDTO adDTO, MultipartFile image);
 
