@@ -57,7 +57,11 @@ public class WebSecurityConfig {
                                 authorization
                                         .mvcMatchers(AUTH_WHITELIST)
                                         .permitAll()
-                                        .mvcMatchers(HttpMethod.DELETE, "/ads/**", "/users/**").hasRole("ADMIN")
+                                        .mvcMatchers(HttpMethod.GET, "/ads/**").permitAll()
+                                        .mvcMatchers(HttpMethod.GET, "/ads/*/comments").permitAll()
+                                        .mvcMatchers(HttpMethod.PATCH, "/ads/**", "/users/**").authenticated()
+                                        .mvcMatchers(HttpMethod.PUT, "/ads/**").authenticated()
+                                        .mvcMatchers(HttpMethod.DELETE, "/ads/**", "/users/**").authenticated()
                                         .mvcMatchers("/ads/**", "/users/**")
                                         .authenticated())
                 .httpBasic(withDefaults())
@@ -75,4 +79,5 @@ public class WebSecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 }

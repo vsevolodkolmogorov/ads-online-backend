@@ -1,17 +1,19 @@
 package ru.skypro.homework.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.AdDTO;
 import ru.skypro.homework.dto.AdsDTO;
 import ru.skypro.homework.dto.CreateOrUpdateAdDTO;
 import ru.skypro.homework.dto.RoleDTO;
+import ru.skypro.homework.exception.AdNotFoundException;
+import ru.skypro.homework.exception.UnauthorizedAdDeletionException;
 import ru.skypro.homework.mapper.AdMapper;
 import ru.skypro.homework.model.Ad;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.service.AdService;
-import ru.skypro.homework.utility.SecurityUtil;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 /**
  * Реализация интерфейса {@link AdService}, предоставляющая операции, связанные с товарами.
  */
+@Slf4j
 @Service
 public class AdServiceImpl implements AdService {
 
@@ -100,12 +103,21 @@ public class AdServiceImpl implements AdService {
     @Override
     public void deleteAd(Integer id) {
         User currentUser = userService.getCurrentUserEntity();
-        Ad ad = adRepository.findById(id).orElseThrow(() -> new RuntimeException("Ad not found"));
-        if (currentUser.getRole() != RoleDTO.ADMIN && !ad.getAuthor().getUsername().equals(currentUser.getUsername())) {
-            throw new RuntimeException("You are not author of this ad");
+        Ad ad = adRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.error("Ad not found with id: {}", id);
+                    return new AdNotFoundException("Ad not found");
+                });
+
+        if (currentUser.getRole() != RoleDTO.ADMIN && ad.getAuthor().getId() != currentUser.getId()) {
+            log.error("User {} is not authorized to delete ad {}", currentUser.getUsername(), id);
+            throw new UnauthorizedAdDeletionException("You are not author of this ad");
         }
+
         adRepository.delete(ad);
+        log.info("Ad {} deleted by user {}", id, currentUser.getUsername());
     }
+
 
     /**
      * Получает все объявления.
@@ -130,7 +142,7 @@ public class AdServiceImpl implements AdService {
     public AdDTO updateAd(Integer id, CreateOrUpdateAdDTO updateAd) {
         User currentUser = userService.getCurrentUserEntity();
         Ad ad = adRepository.findById(id).orElseThrow(() -> new RuntimeException("Ad not found"));
-        if (currentUser.getRole() != RoleDTO.ADMIN && !ad.getAuthor().getUsername().equals(currentUser.getUsername())) {
+        if (currentUser.getRole() != RoleDTO.ADMIN && ad.getAuthor().getId() != currentUser.getId()) {
             throw new RuntimeException("You are not author of this ad");
         }
         ad.setTitle(updateAd.getTitle()).setPrice(updateAd.getPrice()).setDescription(updateAd.getDescription());
@@ -155,13 +167,13 @@ public class AdServiceImpl implements AdService {
      * Проверяет, является ли пользователь автором объявления.
      *
      * @param adId     идентификатор объявления
-     * @param username имя пользователя
+     * @param userId имя пользователя
      * @return true, если пользователь - автор объявления
      */
     @Override
-    public boolean isAdAuthor(Integer adId, String username) {
+    public boolean isAdAuthor(Integer adId, Integer userId) {
         Ad ad = adRepository.findById(adId).orElseThrow(() -> new RuntimeException("Ad not found"));
-        return ad.getAuthor().getUsername().equals(username);
+        return ad.getAuthor().getId() == userId;
     }
 
     /**

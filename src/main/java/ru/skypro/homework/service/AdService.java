@@ -17,7 +17,7 @@ import ru.skypro.homework.model.Ad;
  * - Обновление существующего объявления {@link #updateAd(Integer, CreateOrUpdateAdDTO)}.
  * - Получение объявлений пользователя {@link #getMyAds()}.
  * - Создание сущности {@link Ad} на основе данных {@link AdDTO} {@link #createAdFromDTO(AdDTO)}.
- * - Проверка, является ли пользователь автором объявления {@link #isAdAuthor(Integer, String)}.
+ * - Проверка, является ли пользователь автором объявления {@link #isAdAuthor(Integer, Integer)}.
  * - Удаление объявления {@link #deleteAd(Integer)}.
  * - Обновление изображения объявления {@link #updateAdImage(Integer, MultipartFile)}.
  *
@@ -39,7 +39,7 @@ public interface AdService {
 
     Ad createAdFromDTO(AdDTO adDTO);
 
-    boolean isAdAuthor(Integer adId, String username);
+    boolean isAdAuthor(Integer adId, Integer userId);
 
     void deleteAd(Integer id);
 

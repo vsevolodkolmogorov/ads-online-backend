@@ -24,4 +24,18 @@ public class GlobalExceptionHandler {
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal error");
     }
+    @ExceptionHandler(AdNotFoundException.class)
+    public ResponseEntity<String> handleAdNotFound(AdNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(UnauthorizedAdDeletionException.class)
+    public ResponseEntity<String> handleUnauthorizedAdDeletion(UnauthorizedAdDeletionException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleGeneralException(Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error: " + ex.getMessage());
+    }
 }
